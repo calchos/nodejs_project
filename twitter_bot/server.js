@@ -1,43 +1,60 @@
 var twitter = require('twitter');
 var client = new twitter({
-  consumer_key:        '******',
-  consumer_secret:      '******',
-  access_token_key:         '******',
-  access_token_secret:  '******'
+  consumer_key:        'vanNkrT7N3krV2OHH9fcT6mI',
+  consumer_secret:      '2t0MtkxTqLXR4qfQZa86ept7lzNzck8eaWMYpFC9rzgA21A8ph',
+  access_token_key:         '2726208229-ixHUdYn1PPbm1xiQv473dReo7xvU0fcurt0AhT4',
+  access_token_secret:  '2Pa4HuMdDdJxQmrLPZxo63F6EaabniL46b8BzJDuaEwdf'
 });
 
+var db = require('mongoose');
 var printf = require('printf');
 var BOT_ID = 'SEMsaying';
 
-var replyMap = {
 
-'実験':'ｳﾜｰﾝ｡ﾟ(ﾟ´Д｀ﾟ)ﾟ｡ﾍ(ﾟ∀ﾟﾍ)ﾋｬﾋｬﾋｬ',
-'RPG':'utaretaino?',
-'機関銃少女':'(☆゜-^)┬┬‐ ：・・・・・・ ﾀﾞﾀﾞﾀﾞﾀﾞ',
-'2011リニューアル':'うぅ…わからないぞぉ…',
-'にょへーい☆':'┗┐＜(´(゜)ω(゜)`)＞┌┛',
-'ごんごん':'(ｏ=ω=ｏ)ﾓﾍｯ☆',
-'オメポン':'(*´∀｀*)ﾉ☆でする～♪',
-'初期化爆弾':'ちょぁー！てやぁー！(｀･ω･´)ﾉ●～*',
-'クーたん':'トライを忘れず。支えられていることを忘れずに！',
-'ゆっきー':'失ったら創り出せばいい。無くしたなら探し出せばいい。一歩ずつ進めればいい。一人じゃないから、きっとできる。だから 笑って、泣いて、生きたい。',
-'カルチョスさん':'希望創りし奇跡が、あらゆる戦いを凌駕する。',
-'藍染':'カルチョス「一体――いつから調音査を始めていないと錯覚していた？」'
+var SayingSchema = new db.Schema({
+  text:String,
+  reply:String
+});
 
-};
+var Saying = db.model('Saying', SayingSchema);
 
-//console.log(replyMap);
+db.connect('mongodb://'+process.env.IP+':27017/saying', function(err,db){
+    if(err){
+      return console.log(err);
+    }
+    console.log("connected to db...");
+});
 
+
+Saying.find({}, function(err, docs) {
+  if(!err){
+    console.log("num of item => " + docs.length)
+  for (var i=0; i < docs.length; i++){
+    console.log(docs[i]);
+  }
+  db.disconnect()
+  process.exit()
+  } else {
+    console.log("find error");
+  }
+});
+
+/*
 client.stream('user',function(stream){
   stream.on('data',function(data){
   if(!('text' in data)){
       console.log(data);
- }
+  }
 
-    if(data.screen_name === BOT_ID) return;
-      for(var regex in replyMap){
+    if(data.screen_name === BOT_ID){
+      return console.log("no...");
+    };
+
+      for(var regex in Saying.find()){
+        console.log(regex);
+        console.log(Saying.find());
         if(new RegExp(regex).test(data.text)){
-          var replyStr = printf(replyMap[regex],RegExp.$1);
+          var replyStr = printf(Saying[regex],RegExp.$1);
           var tweetStr = printf('@%s %s', data.user.screen_name, replyStr);
           console.log(tweetStr);
           client.post('statuses/update',{status: tweetStr}, function(error, tweet, response){
@@ -51,3 +68,5 @@ client.stream('user',function(stream){
 
   });
 });
+
+*/
